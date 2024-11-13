@@ -1,0 +1,29 @@
+<html>
+
+<body>
+    <h3>Bulb experiment</h3>
+    <script>
+        function light(sw) {
+            var pic;
+            if (sw == 0) {
+                pic = "pic_bulboff.gif"
+            }
+            else {
+                pic = "pic_bulbon.gif"
+            }
+            document.getElementById('my image').src = pic;
+        }
+
+
+
+    </script>
+
+    <img id="my image" src="pic_bulboff.gif" width="100" height="180">
+    <p>
+        <button type="button" onclick="light(1)">light on</button>
+        <button type="button" onclick="light(0)">light off</button>
+
+    </p>
+</body>
+
+</html>
