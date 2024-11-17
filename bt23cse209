@@ -1,0 +1,144 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for polynomial terms
+typedef struct Node
+{
+    int coefficient;
+    int exponent;
+    struct Node *next;
+} Node;
+
+// Function to create a new node
+Node *createNode(int coefficient, int exponent)
+{
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->coefficient = coefficient;
+    newNode->exponent = exponent;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the linked list
+void insertNode(Node **head, int coefficient, int exponent)
+{
+    Node *newNode = createNode(coefficient, exponent);
+    if (*head == NULL || (*head)->exponent < exponent)
+    {
+        newNode->next = *head;
+        *head = newNode;
+    }
+    else
+    {
+        Node *temp = *head;
+        while (temp->next != NULL && temp->next->exponent >= exponent)
+        {
+            temp = temp->next;
+        }
+        if (temp->exponent == exponent)
+        {
+            temp->coefficient += coefficient;
+            free(newNode);
+        }
+        else
+        {
+            newNode->next = temp->next;
+            temp->next = newNode;
+        }
+    }
+}
+
+// Function to display a polynomial
+void displayPolynomial(Node *head)
+{
+    Node *temp = head;
+    while (temp != NULL)
+    {
+        if (temp->coefficient != 0)
+        {
+            printf("%d", temp->coefficient);
+            if (temp->exponent != 0)
+            {
+                printf("x^%d", temp->exponent);
+            }
+            if (temp->next != NULL && temp->next->coefficient > 0)
+            {
+                printf(" + ");
+            }
+        }
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+// Function to multiply two polynomials
+Node *multiplyPolynomials(Node *poly1, Node *poly2)
+{
+    Node *result = NULL;
+    for (Node *i = poly1; i != NULL; i = i->next)
+    {
+        for (Node *j = poly2; j != NULL; j = j->next)
+        {
+            int coef = i->coefficient * j->coefficient;
+            int exp = i->exponent + j->exponent;
+            insertNode(&result, coef, exp);
+        }
+    }
+    return result;
+}
+
+// Function to free the memory used by the linked list
+void freeList(Node *head)
+{
+    Node *temp;
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main()
+{
+    Node *poly1 = NULL, *poly2 = NULL;
+    int n, coef, exp;
+
+    // Input first polynomial
+    printf("Enter the number of terms in the first polynomial: ");
+    scanf("%d", &n);
+    printf("Enter the terms (coefficient and exponent) of the first polynomial:\n");
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d %d", &coef, &exp);
+        insertNode(&poly1, coef, exp);
+    }
+
+    // Input second polynomial
+    printf("Enter the number of terms in the second polynomial: ");
+    scanf("%d", &n);
+    printf("Enter the terms (coefficient and exponent) of the second polynomial:\n");
+    for (int i = 0; i < n; i++)
+    {
+        scanf("%d %d", &coef, &exp);
+        insertNode(&poly2, coef, exp);
+    }
+
+    // Display input polynomials
+    printf("First polynomial: ");
+    displayPolynomial(poly1);
+    printf("Second polynomial: ");
+    displayPolynomial(poly2);
+
+    // Multiply polynomials
+    Node *result = multiplyPolynomials(poly1, poly2);
+
+    // Display result
+printf("Result of multiplication: ");
+    displayPolynomial(result);
+
+    // Free allocated memory
+    freeList(poly1);
+    freeList(poly2);
+    freeList(result);
+}
